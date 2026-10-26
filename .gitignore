@@ -1,0 +1,32 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments
+.venv/
+venv/
+env/
+
+# SLY / PLY specific (For parser logs and tables)
+parser.out
+parsetab.py
+
+# Testing and Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Distribution / Packaging
+build/
+dist/
+*.egg-info/
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+
+# OS generated files
+.DS_Store
+Thumbs.db
