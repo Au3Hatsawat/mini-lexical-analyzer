@@ -1,0 +1,18 @@
+/*
+  Input 3
+  Testing Lexical Error
+  The program should stop when encountering an invalid character.
+*/
+
+read X;
+read Y;
+
+if X > Y then
+    print "X is max";
+else
+    print "Y is max";
+endif
+
+// The next line contains a lexical error (@)
+
+Z = X @ Y;

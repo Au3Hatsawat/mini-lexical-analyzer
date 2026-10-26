@@ -1,57 +1,97 @@
-## Gemini Prompt
+# Mini Lexical Analyzer
 
-```
-ขอ setup project python + lib sly แบบ best practice หน่อยครับ ใช้แค่ lexer พอครับจะทำ Mini Lexical Analyzer
-```
+โปรแกรมวิเคราะห์คำ (Lexical Analyzer) สำหรับภาษาจำลอง พัฒนาด้วยภาษา Python และไลบรารี [SLY](https://sly.readthedocs.io/) เพื่อสแกนและแยก Source Code จากไฟล์ข้อความ (`.txt`) ออกเป็น Token ประเภทต่าง ๆ ตามข้อกำหนดของโครงงาน
 
-```
-ตอนนี้ใช้ window อยู่ source .venv/bin/activate  ไม่ได้
-source .venv/bin/activate
-source : The term 'source' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try 
-again.
-At line:1 char:1
-+ source .venv/bin/activate
-+ ~~~~~~
-    + CategoryInfo          : ObjectNotFound: (source:String) [], CommandNotFoundException
-    + FullyQualifiedErrorId : CommandNotFoundException
- 
-```
+## ฟีเจอร์หลัก (Features)
+* **Tokenization:** รองรับการแยก Keywords (พิมพ์เล็กเท่านั้น), Identifiers, Integers, Strings, Operators และสัญลักษณ์ (วงเล็บ, Semicolon)
+* **Symbol Table:** บันทึก Identifier ใหม่และตรวจจับ Identifier ที่ซ้ำซ้อน
+* **Comment Handling:** ละเว้นการอ่านโค้ดใน Single-line (`//`) และ Block comments (`/* ... */`)
+* **Error Detection:** ตรวจจับ Lexical Error (เช่น ตัวอักษรที่ไม่อนุญาต หรือ Identifier ผิดรูปแบบ) แจ้งตำแหน่งที่ผิดพลาด และหยุดการทำงานทันที
 
-```
-มีเคสหนึ่งคือ ตัว identifier ห้ามขึ้นต้นด้วย ตัวเลข ห้ามใช้ underscore มี regex แนะนำไหม
-เพื่อที่จะได้เขียน func ดักก่อนที่จะเข้าเคส identifier
-```
+## สิ่งที่ต้องมี (Prerequisites)
+* Python 3.10 หรือใหม่กว่า
+* Git
 
-```
-มันสามารถรวมเคสกันได้ไหม แบบ r'\d+[a-zA-Z][a-zA-Z0-9]* | [a-zA-Z0-9]*_[a-zA-Z0-9_]*'
-```
+## การตั้งค่าโปรเจกต์ (Project Setup)
 
-```
-class MyLexer(Lexer):
+1. **Clone repository และเข้าไปยังโฟลเดอร์โปรเจกต์:**
+   ```bash
+   git clone <ใส่-URL-ของ-Repository-ที่นี่>
+   cd mini-lexer
+   ```
 
-ตัว (Lexer) ที่เป็น เหมือน class รับ args Lexer นี่มันคือการ extend ของ python หรอครับ
-```
+2. **สร้างและเปิดใช้งาน Virtual Environment:**
+   
+   *สำหรับ Windows (PowerShell):*
+   ```powershell
+   python -m venv .venv
+   .venv\Scripts\Activate.ps1
+   ```
+   
+   *สำหรับ macOS / Linux:*
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   ```
 
-```
- tokens = {
-        # Keywords
-        IF, ELSE, WHILE, RETURN, INT_KW, FLOAT_KW,
-        # Identifiers & Literals
-        ID, FLOAT_LIT, INT_LIT, STRING_LIT,
-        # Operators (Multi-char ต้องมาก่อน Single-char)
-        EQ, NEQ, LTE, GTE, ASSIGN,
-        PLUS, MINUS, TIMES, DIVIDE, LT, GT,
-    }
+3. **ติดตั้ง Dependencies:**
+   ตรวจสอบว่ามีไฟล์ `requirements.txt` หรือ `pyproject.toml` แล้วรันคำสั่ง:
+   ```bash
+   pip install -e .
+   ```
 
-คือถ้าตัว tokens ถูก declare ตรงนี้แล้ว assign ค่าที่เป็ฯ IF , ELSE มันจะ not defined นะ งั้นก็ต้องใส่เป็ฯ 'IF' ไม่ใช่หรอครับ
-```
+## วิธีการใช้งาน (Usage)
 
-```
-attach full code & term-report-1-2569.pdf
+โปรแกรมถูกออกแบบมาให้รับ Input เป็นไฟล์ข้อความ (`.txt`) รันคำสั่ง `python` ตามด้วยชื่อไฟล์หลักและไฟล์ที่ต้องการทดสอบ:
 
-ผมไม่ต้องทำ parser ครับอาจารย์ให้ทำตัว mini-lexical-analyzer เฉยๆครับช่วยตรวจให้หน่อยครับว่า requirement ครบรึป่าว
+```bash
+mini-lexer ./src/inputs/input_error.txt
+# หรือ
+python ./src/mini_lexer/main.py ./src/inputs/input-1.txt
 ```
 
+
+
+### ตัวอย่างการทำงาน
+
+**ไฟล์ `input1.txt`:**
+```text
+read A;
+if A >= 10 then
+    print "A is greater";
+endif
 ```
-ขอ gitignore หน่อยครับ
+
+**ผลลัพธ์ (Output):**
+```text
+keyword: read
+new identifier: A
+semicolon: ;
+keyword: if
+identifier "A" already in symbol table
+operator: >=
+integer: 10
+keyword: then
+keyword: print
+string: "A is greater"
+semicolon: ;
+keyword: endif
+```
+
+## โครงสร้างโปรเจกต์ (Project Structure)
+```text
+mini-lexer/
+│
+├── mini_lexer/
+│   ├── __init__.py
+│   ├── main.py 
+│   ├── lexer.py          # คลาส MyLexer และกฎ Regular Expression
+│   └── helper.py         # ฟังก์ชันช่วยจัดรูปแบบ Output (format_token_output)
+├── inputs/               # โฟลเดอร์สำหรับเก็บไฟล์ทดสอบ
+│   ├── input_1.txt       # โค้ดที่ถูกต้อง
+│   ├── input_2.txt       # โค้ดที่มีเงื่อนไขซับซ้อนขึ้น
+│   └── input_error.txt   # โค้ดที่จงใจให้เกิด Lexical Error
+├── .gitignore
+├── pyproject.toml        # (หรือ requirements.txt) จัดการ dependencies
+└── README.md
 ```
