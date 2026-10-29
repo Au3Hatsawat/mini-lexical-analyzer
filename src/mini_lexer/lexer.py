@@ -1,7 +1,7 @@
 import sys
 from sly import Lexer
 
-class MyLexer(Lexer):
+class MiniLexer(Lexer):
     def __init__(self):
         self.symbolTable = set()
 
